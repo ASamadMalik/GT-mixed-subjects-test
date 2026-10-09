@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixed Subjects Test - 50 MCQs</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #eef2f7;
+    color: #1a1a2e;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #0f4c81, #1a6fb5);
+    color: #fff;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  header h1 { font-size: 1.6rem; margin-bottom: 6px; }
+  header p { font-size: 0.95rem; opacity: 0.9; }
+  .info-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    background: #f7f9fc;
+    padding: 14px;
+    border-bottom: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+  .info-bar span { font-weight: 600; color: #0f4c81; }
+  .timer {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f4c81;
+    color: #fff;
+    text-align: center;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .timer.warning { background: #c0392b; animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: 0.7; } }
+  .student-info {
+    padding: 20px 24px;
+    background: #f7f9fc;
+    border-bottom: 1px solid #e2e8f0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .student-info label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #333; }
+  .student-info input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  .student-info input:focus { outline: 2px solid #1a6fb5; border-color: transparent; }
+  .section-title {
+    background: #e8f0fe;
+    color: #0f4c81;
+    padding: 14px 24px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-top: 2px solid #1a6fb5;
+    border-bottom: 1px solid #d0dff0;
+    margin-top: 10px;
+  }
+  .question {
+    padding: 18px 24px;
+    border-bottom: 1px solid #edf2f7;
+  }
+  .question:hover { background: #fafcff; }
+  .question p.qtext {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1a1a2e;
+  }
+  .question label {
+    display: block;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.95rem;
+  }
+  .question label:hover { background: #eef4fb; border-color: #1a6fb5; }
+  .question input[type="radio"] { margin-right: 8px; accent-color: #1a6fb5; }
+  .question input[type="radio"]:checked + span { font-weight: 700; color: #0f4c81; }
+  .submit-area {
+    padding: 24px;
+    text-align: center;
+    background: #f7f9fc;
+    border-top: 2px solid #1a6fb5;
+  }
+  .submit-btn {
+    background: linear-gradient(135deg, #0f4c81, #1a6fb5);
+    color: #fff;
+    border: none;
+    padding: 14px 48px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(15,76,129,0.3); }
+  .submit-btn:disabled { background: #a0aec0; cursor: not-allowed; transform: none; }
+  .progress-bar {
+    position: sticky;
+    top: 48px;
+    z-index: 99;
+    background: #fff;
+    padding: 8px 24px;
+    font-size: 0.85rem;
+    color: #555;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .progress-track {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1a6fb5, #27ae60);
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .result-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .result-modal.show { display: flex; }
+  .result-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  .result-card h2 { color: #0f4c81; margin-bottom: 12px; }
+  .result-card .score-big { font-size: 3rem; font-weight: 800; color: #27ae60; margin: 12px 0; }
+  .result-card .pct { font-size: 1.2rem; color: #555; margin-bottom: 16px; }
+  .result-card p { font-size: 0.9rem; color: #666; margin-bottom: 20px; }
+  .result-card button {
+    background: #0f4c81; color: #fff; border: none;
+    padding: 10px 32px; border-radius: 6px; cursor: pointer; font-weight: 600;
+  }
+  @media (max-width: 600px) {
+    .student-info { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.25rem; }
+    .question { padding: 14px 16px; }
+    .submit-btn { width: 100%; padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Mixed Subjects Test — 50 MCQs</h1>
+    <p>BODMAS &amp; Integers | Fractions | Synonyms &amp; Antonyms | Solar System | Parts of Speech | Living Things | Force | Decimals</p>
+  </header>
+
+  <div class="info-bar">
+    <div>Total Questions: <span>50</span></div>
+    <div>Total Marks: <span>50</span></div>
+    <div>Time Allowed: <span>60 Minutes</span></div>
+  </div>
+
+  <div class="timer" id="timer">⏱ 60:00</div>
+
+  <div class="student-info">
+    <div>
+      <label for="studentName">Student Name</label>
+      <input type="text" id="studentName" placeholder="Enter your full name" required>
+    </div>
+    <div>
+      <label for="rollNo">Roll No.</label>
+      <input type="text" id="rollNo" placeholder="Enter your roll number" required>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <span id="progressText">Answered: 0 / 50</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <form id="quizForm" onsubmit="return false;">
+
+    <!-- SECTION A -->
+    <div class="section-title">Section A: BODMAS and Integers (Q1–Q5)</div>
+
+    <div class="question">
+      <p class="qtext">Q1. What is the value of 8 + 2 × 5?</p>
+      <label><input type="radio" name="q1" value="A"><span>A) 50</span></label>
+      <label><input type="radio" name="q1" value="B"><span>B) 18</span></label>
+      <label><input type="radio" name="q1" value="C"><span>C) 20</span></label>
+      <label><input type="radio" name="q1" value="D"><span>D) 15</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q2. What is the value of 20 − 12 ÷ 4?</p>
+      <label><input type="radio" name="q2" value="A"><span>A) 2</span></label>
+      <label><input type="radio" name="q2" value="B"><span>B) 5</span></label>
+      <label><input type="radio" name="q2" value="C"><span>C) 17</span></label>
+      <label><input type="radio" name="q2" value="D"><span>D) 8</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q3. What is the value of (6 + 4) × 3 − 5?</p>
+      <label><input type="radio" name="q3" value="A"><span>A) 25</span></label>
+      <label><input type="radio" name="q3" value="B"><span>B) 13</span></label>
+      <label><input type="radio" name="q3" value="C"><span>C) 35</span></label>
+      <label><input type="radio" name="q3" value="D"><span>D) 29</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q4. What is the value of −7 + 3?</p>
+      <label><input type="radio" name="q4" value="A"><span>A) 4</span></label>
+      <label><input type="radio" name="q4" value="B"><span>B) −10</span></label>
+      <label><input type="radio" name="q4" value="C"><span>C) −4</span></label>
+      <label><input type="radio" name="q4" value="D"><span>D) 10</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q5. Which is the smallest integer?</p>
+      <label><input type="radio" name="q5" value="A"><span>A) 5</span></label>
+      <label><input type="radio" name="q5" value="B"><span>B) 0</span></label>
+      <label><input type="radio" name="q5" value="C"><span>C) −2</span></label>
+      <label><input type="radio" name="q5" value="D"><span>D) −9</span></label>
+    </div>
+
+    <!-- SECTION B -->
+    <div class="section-title">Section B: Fractions (Q6–Q10)</div>
+
+    <div class="question">
+      <p class="qtext">Q6. What is 1/2 + 1/4?</p>
+      <label><input type="radio" name="q6" value="A"><span>A) 2/6</span></label>
+      <label><input type="radio" name="q6" value="B"><span>B) 3/4</span></label>
+      <label><input type="radio" name="q6" value="C"><span>C) 1/6</span></label>
+      <label><input type="radio" name="q6" value="D"><span>D) 2/4</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q7. What is 3/4 − 1/4?</p>
+      <label><input type="radio" name="q7" value="A"><span>A) 1/4</span></label>
+      <label><input type="radio" name="q7" value="B"><span>B) 3/4</span></label>
+      <label><input type="radio" name="q7" value="C"><span>C) 1/2</span></label>
+      <label><input type="radio" name="q7" value="D"><span>D) 2/8</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q8. What is 2/3 × 3/4?</p>
+      <label><input type="radio" name="q8" value="A"><span>A) 5/7</span></label>
+      <label><input type="radio" name="q8" value="B"><span>B) 6/7</span></label>
+      <label><input type="radio" name="q8" value="C"><span>C) 8/9</span></label>
+      <label><input type="radio" name="q8" value="D"><span>D) 1/2</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q9. What is the simplest form of 6/8?</p>
+      <label><input type="radio" name="q9" value="A"><span>A) 3/4</span></label>
+      <label><input type="radio" name="q9" value="B"><span>B) 2/3</span></label>
+      <label><input type="radio" name="q9" value="C"><span>C) 6/4</span></label>
+      <label><input type="radio" name="q9" value="D"><span>D) 1/2</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q10. Which fraction is the greatest?</p>
+      <label><input type="radio" name="q10" value="A"><span>A) 1/5</span></label>
+      <label><input type="radio" name="q10" value="B"><span>B) 1/2</span></label>
+      <label><input type="radio" name="q10" value="C"><span>C) 1/3</span></label>
+      <label><input type="radio" name="q10" value="D"><span>D) 1/4</span></label>
+    </div>
+
+    <!-- SECTION C -->
+    <div class="section-title">Section C: Synonyms and Antonyms (Q11–Q20)</div>
+
+    <div class="question">
+      <p class="qtext">Q11. Choose the synonym (same meaning) of Courage.</p>
+      <label><input type="radio" name="q11" value="A"><span>A) Fear</span></label>
+      <label><input type="radio" name="q11" value="B"><span>B) Anger</span></label>
+      <label><input type="radio" name="q11" value="C"><span>C) Bravery</span></label>
+      <label><input type="radio" name="q11" value="D"><span>D) Sadness</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q12. Choose the synonym of Glad.</p>
+      <label><input type="radio" name="q12" value="A"><span>A) Happy</span></label>
+      <label><input type="radio" name="q12" value="B"><span>B) Sad</span></label>
+      <label><input type="radio" name="q12" value="C"><span>C) Angry</span></label>
+      <label><input type="radio" name="q12" value="D"><span>D) Tired</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q13. Choose the synonym of Chilly.</p>
+      <label><input type="radio" name="q13" value="A"><span>A) Warm</span></label>
+      <label><input type="radio" name="q13" value="B"><span>B) Cool</span></label>
+      <label><input type="radio" name="q13" value="C"><span>C) Hot</span></label>
+      <label><input type="radio" name="q13" value="D"><span>D) Sunny</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q14. Choose the synonym of Beg.</p>
+      <label><input type="radio" name="q14" value="A"><span>A) Refuse</span></label>
+      <label><input type="radio" name="q14" value="B"><span>B) Give</span></label>
+      <label><input type="radio" name="q14" value="C"><span>C) Steal</span></label>
+      <label><input type="radio" name="q14" value="D"><span>D) Plead</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q15. Choose the synonym of Anxious.</p>
+      <label><input type="radio" name="q15" value="A"><span>A) Nervous</span></label>
+      <label><input type="radio" name="q15" value="B"><span>B) Calm</span></label>
+      <label><input type="radio" name="q15" value="C"><span>C) Brave</span></label>
+      <label><input type="radio" name="q15" value="D"><span>D) Lazy</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q16. Choose the antonym (opposite meaning) of Full.</p>
+      <label><input type="radio" name="q16" value="A"><span>A) Whole</span></label>
+      <label><input type="radio" name="q16" value="B"><span>B) Empty</span></label>
+      <label><input type="radio" name="q16" value="C"><span>C) Packed</span></label>
+      <label><input type="radio" name="q16" value="D"><span>D) Complete</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q17. Choose the antonym of Accept.</p>
+      <label><input type="radio" name="q17" value="A"><span>A) Take</span></label>
+      <label><input type="radio" name="q17" value="B"><span>B) Receive</span></label>
+      <label><input type="radio" name="q17" value="C"><span>C) Reject</span></label>
+      <label><input type="radio" name="q17" value="D"><span>D) Agree</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q18. Choose the antonym of Strong.</p>
+      <label><input type="radio" name="q18" value="A"><span>A) Weak</span></label>
+      <label><input type="radio" name="q18" value="B"><span>B) Mighty</span></label>
+      <label><input type="radio" name="q18" value="C"><span>C) Firm</span></label>
+      <label><input type="radio" name="q18" value="D"><span>D) Powerful</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q19. Choose the antonym of Early.</p>
+      <label><input type="radio" name="q19" value="A"><span>A) Soon</span></label>
+      <label><input type="radio" name="q19" value="B"><span>B) Late</span></label>
+      <label><input type="radio" name="q19" value="C"><span>C) Quick</span></label>
+      <label><input type="radio" name="q19" value="D"><span>D) First</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q20. Choose the antonym of Remember.</p>
+      <label><input type="radio" name="q20" value="A"><span>A) Recall</span></label>
+      <label><input type="radio" name="q20" value="B"><span>B) Think</span></label>
+      <label><input type="radio" name="q20" value="C"><span>C) Know</span></label>
+      <label><input type="radio" name="q20" value="D"><span>D) Forget</span></label>
+    </div>
+
+    <!-- SECTION D -->
+    <div class="section-title">Section D: Solar System (Q21–Q25)</div>
+
+    <div class="question">
+      <p class="qtext">Q21. Which planet is closest to the Sun?</p>
+      <label><input type="radio" name="q21" value="A"><span>A) Venus</span></label>
+      <label><input type="radio" name="q21" value="B"><span>B) Mercury</span></label>
+      <label><input type="radio" name="q21" value="C"><span>C) Earth</span></label>
+      <label><input type="radio" name="q21" value="D"><span>D) Mars</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q22. Which is the largest planet in the solar system?</p>
+      <label><input type="radio" name="q22" value="A"><span>A) Saturn</span></label>
+      <label><input type="radio" name="q22" value="B"><span>B) Earth</span></label>
+      <label><input type="radio" name="q22" value="C"><span>C) Jupiter</span></label>
+      <label><input type="radio" name="q22" value="D"><span>D) Neptune</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q23. Which planet is known as the Red Planet?</p>
+      <label><input type="radio" name="q23" value="A"><span>A) Mars</span></label>
+      <label><input type="radio" name="q23" value="B"><span>B) Venus</span></label>
+      <label><input type="radio" name="q23" value="C"><span>C) Jupiter</span></label>
+      <label><input type="radio" name="q23" value="D"><span>D) Mercury</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q24. How many planets are there in the solar system?</p>
+      <label><input type="radio" name="q24" value="A"><span>A) 7</span></label>
+      <label><input type="radio" name="q24" value="B"><span>B) 9</span></label>
+      <label><input type="radio" name="q24" value="C"><span>C) 10</span></label>
+      <label><input type="radio" name="q24" value="D"><span>D) 8</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q25. What is the natural satellite of the Earth?</p>
+      <label><input type="radio" name="q25" value="A"><span>A) Sun</span></label>
+      <label><input type="radio" name="q25" value="B"><span>B) Moon</span></label>
+      <label><input type="radio" name="q25" value="C"><span>C) Star</span></label>
+      <label><input type="radio" name="q25" value="D"><span>D) Comet</span></label>
+    </div>
+
+    <!-- SECTION E -->
+    <div class="section-title">Section E: Parts of Speech (Q26–Q35)</div>
+
+    <div class="question">
+      <p class="qtext">Q26. Which word is a noun?</p>
+      <label><input type="radio" name="q26" value="A"><span>A) sing</span></label>
+      <label><input type="radio" name="q26" value="B"><span>B) quickly</span></label>
+      <label><input type="radio" name="q26" value="C"><span>C) teacher</span></label>
+      <label><input type="radio" name="q26" value="D"><span>D) under</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q27. Which word is a pronoun?</p>
+      <label><input type="radio" name="q27" value="A"><span>A) she</span></label>
+      <label><input type="radio" name="q27" value="B"><span>B) table</span></label>
+      <label><input type="radio" name="q27" value="C"><span>C) run</span></label>
+      <label><input type="radio" name="q27" value="D"><span>D) green</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q28. Which word is a verb? "Sara reads a book."</p>
+      <label><input type="radio" name="q28" value="A"><span>A) Sara</span></label>
+      <label><input type="radio" name="q28" value="B"><span>B) a</span></label>
+      <label><input type="radio" name="q28" value="C"><span>C) book</span></label>
+      <label><input type="radio" name="q28" value="D"><span>D) reads</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q29. Which word is an adverb? "The bird sings sweetly."</p>
+      <label><input type="radio" name="q29" value="A"><span>A) bird</span></label>
+      <label><input type="radio" name="q29" value="B"><span>B) sings</span></label>
+      <label><input type="radio" name="q29" value="C"><span>C) sweetly</span></label>
+      <label><input type="radio" name="q29" value="D"><span>D) The</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q30. Which word is an adjective? "She wore a blue dress."</p>
+      <label><input type="radio" name="q30" value="A"><span>A) She</span></label>
+      <label><input type="radio" name="q30" value="B"><span>B) blue</span></label>
+      <label><input type="radio" name="q30" value="C"><span>C) wore</span></label>
+      <label><input type="radio" name="q30" value="D"><span>D) dress</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q31. Which word is a preposition? "The book is on the table."</p>
+      <label><input type="radio" name="q31" value="A"><span>A) on</span></label>
+      <label><input type="radio" name="q31" value="B"><span>B) book</span></label>
+      <label><input type="radio" name="q31" value="C"><span>C) is</span></label>
+      <label><input type="radio" name="q31" value="D"><span>D) table</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q32. Which word is a conjunction? "I like tea and coffee."</p>
+      <label><input type="radio" name="q32" value="A"><span>A) like</span></label>
+      <label><input type="radio" name="q32" value="B"><span>B) and</span></label>
+      <label><input type="radio" name="q32" value="C"><span>C) tea</span></label>
+      <label><input type="radio" name="q32" value="D"><span>D) coffee</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q33. Which word is an interjection? "Wow! That is a big cake."</p>
+      <label><input type="radio" name="q33" value="A"><span>A) That</span></label>
+      <label><input type="radio" name="q33" value="B"><span>B) big</span></label>
+      <label><input type="radio" name="q33" value="C"><span>C) cake</span></label>
+      <label><input type="radio" name="q33" value="D"><span>D) Wow</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q34. Which word is a noun? "The tall man waved."</p>
+      <label><input type="radio" name="q34" value="A"><span>A) man</span></label>
+      <label><input type="radio" name="q34" value="B"><span>B) tall</span></label>
+      <label><input type="radio" name="q34" value="C"><span>C) The</span></label>
+      <label><input type="radio" name="q34" value="D"><span>D) waved</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q35. Which word is a verb? "Children play in the park."</p>
+      <label><input type="radio" name="q35" value="A"><span>A) Children</span></label>
+      <label><input type="radio" name="q35" value="B"><span>B) in</span></label>
+      <label><input type="radio" name="q35" value="C"><span>C) play</span></label>
+      <label><input type="radio" name="q35" value="D"><span>D) park</span></label>
+    </div>
+
+    <!-- SECTION F -->
+    <div class="section-title">Section F: Living Things (Q36–Q40)</div>
+
+    <div class="question">
+      <p class="qtext">Q36. Which of these is a living thing?</p>
+      <label><input type="radio" name="q36" value="A"><span>A) Stone</span></label>
+      <label><input type="radio" name="q36" value="B"><span>B) Tree</span></label>
+      <label><input type="radio" name="q36" value="C"><span>C) Chair</span></label>
+      <label><input type="radio" name="q36" value="D"><span>D) Water</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q37. Which of these is NOT a characteristic of living things?</p>
+      <label><input type="radio" name="q37" value="A"><span>A) Growth</span></label>
+      <label><input type="radio" name="q37" value="B"><span>B) Breathing</span></label>
+      <label><input type="radio" name="q37" value="C"><span>C) Reproduction</span></label>
+      <label><input type="radio" name="q37" value="D"><span>D) Rusting</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q38. How do green plants make their food?</p>
+      <label><input type="radio" name="q38" value="A"><span>A) Photosynthesis</span></label>
+      <label><input type="radio" name="q38" value="B"><span>B) Digestion</span></label>
+      <label><input type="radio" name="q38" value="C"><span>C) Evaporation</span></label>
+      <label><input type="radio" name="q38" value="D"><span>D) Melting</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q39. Which of these is a non-living thing?</p>
+      <label><input type="radio" name="q39" value="A"><span>A) Bird</span></label>
+      <label><input type="radio" name="q39" value="B"><span>B) Rock</span></label>
+      <label><input type="radio" name="q39" value="C"><span>C) Fish</span></label>
+      <label><input type="radio" name="q39" value="D"><span>D) Grass</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q40. What do living things need to survive?</p>
+      <label><input type="radio" name="q40" value="A"><span>A) Plastic and glass</span></label>
+      <label><input type="radio" name="q40" value="B"><span>B) Rocks and sand</span></label>
+      <label><input type="radio" name="q40" value="C"><span>C) Air, water and food</span></label>
+      <label><input type="radio" name="q40" value="D"><span>D) Paper and wood</span></label>
+    </div>
+
+    <!-- SECTION G -->
+    <div class="section-title">Section G: Force (Q41–Q45)</div>
+
+    <div class="question">
+      <p class="qtext">Q41. What is force?</p>
+      <label><input type="radio" name="q41" value="A"><span>A) A colour</span></label>
+      <label><input type="radio" name="q41" value="B"><span>B) A push or a pull</span></label>
+      <label><input type="radio" name="q41" value="C"><span>C) A sound</span></label>
+      <label><input type="radio" name="q41" value="D"><span>D) A shape</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q42. What is the unit of force?</p>
+      <label><input type="radio" name="q42" value="A"><span>A) Metre</span></label>
+      <label><input type="radio" name="q42" value="B"><span>B) Kilogram</span></label>
+      <label><input type="radio" name="q42" value="C"><span>C) Newton</span></label>
+      <label><input type="radio" name="q42" value="D"><span>D) Second</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q43. Which force pulls objects towards the Earth?</p>
+      <label><input type="radio" name="q43" value="A"><span>A) Gravity</span></label>
+      <label><input type="radio" name="q43" value="B"><span>B) Friction</span></label>
+      <label><input type="radio" name="q43" value="C"><span>C) Magnetism</span></label>
+      <label><input type="radio" name="q43" value="D"><span>D) Push</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q44. Which force opposes the motion of an object moving over a surface?</p>
+      <label><input type="radio" name="q44" value="A"><span>A) Gravity</span></label>
+      <label><input type="radio" name="q44" value="B"><span>B) Magnetism</span></label>
+      <label><input type="radio" name="q44" value="C"><span>C) Push</span></label>
+      <label><input type="radio" name="q44" value="D"><span>D) Friction</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q45. A force can change which of these?</p>
+      <label><input type="radio" name="q45" value="A"><span>A) Only the colour of an object</span></label>
+      <label><input type="radio" name="q45" value="B"><span>B) Only the taste of an object</span></label>
+      <label><input type="radio" name="q45" value="C"><span>C) The speed, direction or shape of an object</span></label>
+      <label><input type="radio" name="q45" value="D"><span>D) Only the smell of an object</span></label>
+    </div>
+
+    <!-- SECTION H -->
+    <div class="section-title">Section H: Decimals (Q46–Q50)</div>
+
+    <div class="question">
+      <p class="qtext">Q46. What is 0.5 + 0.25?</p>
+      <label><input type="radio" name="q46" value="A"><span>A) 0.30</span></label>
+      <label><input type="radio" name="q46" value="B"><span>B) 0.75</span></label>
+      <label><input type="radio" name="q46" value="C"><span>C) 0.55</span></label>
+      <label><input type="radio" name="q46" value="D"><span>D) 7.5</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q47. What is 3.6 − 1.2?</p>
+      <label><input type="radio" name="q47" value="A"><span>A) 2.4</span></label>
+      <label><input type="radio" name="q47" value="B"><span>B) 4.8</span></label>
+      <label><input type="radio" name="q47" value="C"><span>C) 2.8</span></label>
+      <label><input type="radio" name="q47" value="D"><span>D) 3.2</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q48. What is 1/4 written as a decimal?</p>
+      <label><input type="radio" name="q48" value="A"><span>A) 0.14</span></label>
+      <label><input type="radio" name="q48" value="B"><span>B) 0.4</span></label>
+      <label><input type="radio" name="q48" value="C"><span>C) 0.25</span></label>
+      <label><input type="radio" name="q48" value="D"><span>D) 0.5</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q49. Which decimal is the greatest?</p>
+      <label><input type="radio" name="q49" value="A"><span>A) 0.05</span></label>
+      <label><input type="radio" name="q49" value="B"><span>B) 0.4</span></label>
+      <label><input type="radio" name="q49" value="C"><span>C) 0.45</span></label>
+      <label><input type="radio" name="q49" value="D"><span>D) 0.5</span></label>
+    </div>
+
+    <div class="question">
+      <p class="qtext">Q50. What is 2.5 × 4?</p>
+      <label><input type="radio" name="q50" value="A"><span>A) 8</span></label>
+      <label><input type="radio" name="q50" value="B"><span>B) 10</span></label>
+      <label><input type="radio" name="q50" value="C"><span>C) 6.5</span></label>
+      <label><input type="radio" name="q50" value="D"><span>D) 12</span></label>
+    </div>
+
+  </form>
+
+  <div class="submit-area">
+    <button class="submit-btn" id="submitBtn" onclick="submitTest()">Submit Test</button>
+  </div>
+</div>
+
+<!-- Result Modal -->
+<div class="result-modal" id="resultModal">
+  <div class="result-card">
+    <h2>✅ Test Submitted</h2>
+    <div class="score-big" id="resultScore">0/50</div>
+    <div class="pct" id="resultPct">0%</div>
+    <p id="resultMsg">Your result has been sent to the teacher.</p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW
+   Format: https://script.google.com/macros/s/XXXXXXXXXXXX/exec
+   ============================================================ */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7fumwef5E9DKYMj1zTNhkWDQ--QH2CwAmqZ0rwjd8K6ikfY_4T98fSqCgNkKXuzGt/exec";
+
+/* ---------- ANSWER KEY ---------- */
+const answerKey = {
+  q1:"B", q2:"C", q3:"A", q4:"C", q5:"D",
+  q6:"B", q7:"C", q8:"D", q9:"A", q10:"B",
+  q11:"C", q12:"A", q13:"B", q14:"D", q15:"A",
+  q16:"B", q17:"C", q18:"A", q19:"B", q20:"D",
+  q21:"B", q22:"C", q23:"A", q24:"D", q25:"B",
+  q26:"C", q27:"A", q28:"D", q29:"C", q30:"B",
+  q31:"A", q32:"B", q33:"D", q34:"A", q35:"C",
+  q36:"B", q37:"D", q38:"A", q39:"B", q40:"C",
+  q41:"B", q42:"C", q43:"A", q44:"D", q45:"C",
+  q46:"B", q47:"A", q48:"C", q49:"D", q50:"B"
+};
+
+/* ---------- TAB SWITCH DETECTION ---------- */
+let tabSwitchCount = 0;
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) {
+    tabSwitchCount++;
+  }
+});
+
+/* ---------- 60-MINUTE TIMER ---------- */
+let timeLeft = 60 * 60; // seconds
+const timerEl = document.getElementById("timer");
+const submitBtn = document.getElementById("submitBtn");
+
+function updateTimer() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  timerEl.textContent = "⏱ " + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  if (timeLeft <= 300) {
+    timerEl.classList.add("warning");
+  }
+  if (timeLeft <= 0) {
+    clearInterval(timerInterval);
+    alert("⏰ Time is up! Your test will be submitted automatically.");
+    submitTest(true);
+  }
+  timeLeft--;
+}
+const timerInterval = setInterval(updateTimer, 1000);
+updateTimer();
+
+/* ---------- PROGRESS TRACKER ---------- */
+const totalQuestions = 50;
+document.getElementById("quizForm").addEventListener("change", updateProgress);
+
+function updateProgress() {
+  let answered = 0;
+  for (let i = 1; i <= totalQuestions; i++) {
+    if (document.querySelector(`input[name="q${i}"]:checked`)) answered++;
+  }
+  document.getElementById("progressText").textContent = `Answered: ${answered} / ${totalQuestions}`;
+  document.getElementById("progressFill").style.width = (answered / totalQuestions * 100) + "%";
+}
+
+/* ---------- AUTO-SUBMIT ON TAB SWITCH (3 strikes) ---------- */
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden && tabSwitchCount >= 3) {
+    alert("⚠️ You switched tabs 3 times. Your test is being submitted automatically.");
+    submitTest(true, "Tab Switch Limit Exceeded");
+  }
+});
+
+/* ---------- SUBMIT TEST ---------- */
+let hasSubmitted = false;
+
+function submitTest(auto = false, reason = "Manual Submit") {
+  if (hasSubmitted) return;
+
+  const name = document.getElementById("studentName").value.trim();
+  const roll = document.getElementById("rollNo").value.trim();
+
+  if (!auto) {
+    if (!name || !roll) {
+      alert("⚠️ Please enter your Name and Roll No. before submitting.");
+      return;
+    }
+    const confirmSubmit = confirm("Are you sure you want to submit your test?");
+    if (!confirmSubmit) return;
+  }
+
+  hasSubmitted = true;
+  clearInterval(timerInterval);
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
+  let score = 0;
+  for (let i = 1; i <= totalQuestions; i++) {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if (selected && selected.value === answerKey[`q${i}`]) {
+      score++;
+    }
+  }
+
+  const percentage = (score / totalQuestions * 100).toFixed(2);
+
+  const data = {
+    name: name || "Unknown",
+    roll: roll || "Unknown",
+    score: score,
+    percentage: percentage + "%",
+    tabSwitches: tabSwitchCount,
+    reason: reason,
+    testName: "Mixed Subjects Test - 50 MCQs"
+  };
+
+  // Send to Google Sheets
+  if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("PASTE_YOUR")) {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    }).catch(err => console.error("Submission error:", err));
+  } else {
+    console.warn("⚠️ GOOGLE_SCRIPT_URL not set. Result not sent to Google Sheets.");
+  }
+
+  // Show result modal
+  document.getElementById("resultScore").textContent = score + "/" + totalQuestions;
+  document.getElementById("resultPct").textContent = percentage + "%";
+  document.getElementById("resultMsg").textContent =
+    (GOOGLE_SCRIPT_URL.includes("PASTE_YOUR")
+      ? "⚠️ Demo mode: URL not configured. Result not saved."
+      : "✅ Your result has been sent to the teacher.");
+  document.getElementById("resultModal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("resultModal").classList.remove("show");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+</script>
+</body>
+</html>
